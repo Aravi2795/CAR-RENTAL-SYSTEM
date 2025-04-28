@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -196,13 +199,28 @@ public class Carrent {
 
         System.out.println("Document upload status: " + doc);
     }
+	
 
     static void viewReminders() {
-        System.out.println("\n--- Rental Reminders ---");
-        LocalDate today = LocalDate.now();
-        for (Rental rental : rentals) {
-            long daysLeft = ChronoUnit.DAYS.between(today, rental.dueDate);
-            System.out.println(rental + " - " + daysLeft + " day(s) left");
-        }
+    System.out.println("\n--- Rental Reminders ---");
+    LocalDate today = LocalDate.now();
+    StringBuilder reminderDetails = new StringBuilder();
+
+    for (Rental rental : rentals) {
+        long daysLeft = ChronoUnit.DAYS.between(today, rental.dueDate);
+        String reminder = rental + " - " + daysLeft + " day(s) left";
+        System.out.println(reminder);
+        reminderDetails.append(reminder).append("\n");
     }
+
+    
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter("new1.txt", true))) {
+        writer.write("Reminders as of " + today + ":\n");
+        writer.write(reminderDetails.toString());
+        writer.write("\n"); 
+        System.out.println("Reminders have been saved to 'new1.txt'.");
+    } catch (IOException e) {
+        System.out.println("Error writing to file: " + e.getMessage());
+    }
+}
 }
